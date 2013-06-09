@@ -18,7 +18,7 @@
 
     $.get(this.getAttribute('href'), function(result) {
       container.html(result);
-      //container.removeClass('loading');
+      container.removeClass('loading');
     });
   });
 
