@@ -12,6 +12,16 @@
     load_table($(this).closest('.osom-table'), this.getAttribute('href'));
   });
 
+  $(document).on('click', '.osom-table th[data-order]', function(e) {
+    var order = $(this).data('order'), asc = $(this).hasClass('asc');
+
+    load_table($(this).closest('.osom-table'), build_url(
+      $(this).closest('table').data('url'), {
+        order: order + (asc ? '_desc' : ''), page: 1
+      }
+    ));
+  });
+
   $(window).on('popstate', function(e) {
     var state = e.originalEvent.state;
     if (state && state.url) {
@@ -30,9 +40,10 @@
 
     if (history.pushState && !no_push && container.find('table').data('push')) {
       history.pushState({url: url}, 'osom-table', url);
+      url = build_url(url, {osom_tables_cache_killa: true});
     }
 
-    $.ajax(build_url(url, {sneaky_cache_killa: true}), {
+    $.ajax(url, {
       success: function(new_content) {
         container.html(new_content);
       },

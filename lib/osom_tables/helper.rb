@@ -5,6 +5,7 @@ module OsomTables::Helper
     url      = options[:url]   || request.fullpath and options.delete(:url)
     search   = options[:search] == true and options.delete(:search)
     paginate = options[:paginate] || {} and options.delete(:paginate)
+    url      = url.gsub(/(\?|&)osom_tables_cache_killa=[^&]*?/, '')
 
     options[:data] ||= {}
     options[:data][:url]  = url

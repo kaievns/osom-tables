@@ -35,6 +35,39 @@
         border-radius:    1em;
       }
     }
+
+    thead th.sortable {
+      cursor:              pointer;
+      transition:          background-color .25s ease-in-out;
+      -o-transition:       background-color .25s ease-in-out;
+      -ms-transition:      background-color .25s ease-in-out;
+      -moz-transition:     background-color .25s ease-in-out;
+      -webkit-transition:  background-color .25s ease-in-out;
+
+      &:hover, &.asc, &.desc {
+        background-color: #efd;
+
+        &:after {
+          opacity: 1;
+        }
+      }
+
+      &:after {
+        content: '\25BE';
+        display: block;
+        float:   right;
+        opacity: .5;
+        vertical-align: middle;
+      }
+
+      &.desc:after {
+        transform:         rotate(180deg);
+        -o-transform:      rotate(180deg);
+        -ms-transform:     rotate(180deg);
+        -moz-transform:    rotate(180deg);
+        -webkit-transform: rotate(180deg);
+      }
+    }
   }
 
   &.loading {
