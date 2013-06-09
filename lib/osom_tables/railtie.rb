@@ -11,3 +11,6 @@ class OsomTables::Railtie < Rails::Railtie
     end
   end
 end
+
+class OsomTables::Engine < Rails::Engine
+end
