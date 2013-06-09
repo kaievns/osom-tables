@@ -37,8 +37,11 @@
 
   function load_table(container, url, no_push) {
     current_table = container.addClass('loading');
+    actual_table  = container.find('table');
 
-    if (history.pushState && !no_push && container.find('table').data('push')) {
+    actual_table.trigger('osom-table:request');
+
+    if (history.pushState && !no_push && actual_table.data('push')) {
       history.pushState({url: url}, 'osom-table', url);
       url = build_url(url, {osom_tables_cache_killa: true});
     }
@@ -49,6 +52,7 @@
       },
       complete: function() {
         container.removeClass('loading');
+        actual_table.trigger('osom-table:loaded');
       }
     });
   };
