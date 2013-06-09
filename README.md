@@ -10,6 +10,10 @@ Ajax tables engine that respects MVC and goes well with the rails way.
 4. Unit testable, every moving part is independent and unit-testable
 5. Light footprint, the whole thing is less than 100 lines of JS
 
+## Demo App
+
+You can find a simple demo-app [over here](https://github.com/MadRabbit/osom-tables-app)
+
 
 ## Simple Setup
 
