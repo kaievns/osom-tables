@@ -11,8 +11,8 @@
     e.preventDefault();
 
     var container = $(this).closest('.osom-table');
-    var table     = container.find('table');
-    var url       = table.data('url');
+    var push      = container.data('push');
+    var url       = container.data('url');
 
     container.addClass('loading');
 

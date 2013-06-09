@@ -1,3 +1,5 @@
-module OsomTables
-  VERSION = '0.0.0'
-end
+#
+# Just a gem hook
+#
+require 'osom_tables'
+require 'osom_tables/railtie' if defined?(Rails)
