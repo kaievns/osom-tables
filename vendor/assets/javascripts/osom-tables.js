@@ -48,7 +48,7 @@
 
     $.ajax(url, {
       success: function(new_content) {
-        container.html(new_content);
+        container.replaceWith(new_content);
       },
       complete: function() {
         container.removeClass('loading');

@@ -48,7 +48,13 @@ module OsomTables::Helper
     end
 
     def head(&block)
-      head_row = @context.content_tag :tr, &block
+      inner, has_tr = capture_tr { yield }
+      
+      head_row = if has_tr
+        inner
+      else
+        @context.content_tag(:tr) { inner }
+      end
 
       while m = head_row.match(/<th(.*?) (order=("|')(.+?)\3)(.*?)>/)
         m   = m.to_a
@@ -73,10 +79,14 @@ module OsomTables::Helper
     def body(&block)
       @context.content_tag :tbody do
         @items.map do |item|
-          if defined?(ActiveRecord) && item.is_a?(ActiveRecord::Base)
-            @context.content_tag_for(:tr, item){ yield(item) }
+          inner, has_tr = capture_tr { yield item }
+
+          if has_tr
+            inner
+          elsif defined?(ActiveRecord) && item.is_a?(ActiveRecord::Base)
+            @context.content_tag_for(:tr, item){ inner }
           else
-            @context.content_tag(:tr){ yield(item) }
+            @context.content_tag(:tr){ inner }
           end
         end.join("\n").html_safe
       end
@@ -84,8 +94,22 @@ module OsomTables::Helper
 
     def foot(&block)
       @context.content_tag :tfoot do
-        @context.content_tag :tr, &block
+        inner, has_tr = capture_tr { yield }
+
+        if has_tr
+          inner
+        else
+          @context.content_tag(:tr) { inner }
+        end
       end
+    end
+
+    private
+    def capture_tr(&block)
+      inner = @context.capture do
+        yield
+      end
+      [inner, inner =~ /\A\s*<tr(\s|>)/i]
     end
   end
 end
