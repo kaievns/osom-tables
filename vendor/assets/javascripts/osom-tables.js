@@ -12,6 +12,11 @@
     load_table($(this).closest('.osom-table'), this.getAttribute('href'));
   });
 
+  $(document).on('click', 'a.osom-tables', function(e) {
+    e.preventDefault();
+    load_table($("#" + $(this).data('osom-table-for')).closest('.osom-table'), this.getAttribute('href'));
+  });
+
   $(document).on('click', '.osom-table th[data-order]', function(e) {
     var order = $(this).data('order'), asc = $(this).hasClass('asc');
 

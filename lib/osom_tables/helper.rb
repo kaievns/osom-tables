@@ -11,11 +11,16 @@ module OsomTables::Helper
     options[:data][:url]  = url
     options[:data][:push] = true if push
 
-    content_tag :div, class: 'osom-table' do
+    content_tag :div, class: "osom-table #{"loading" if items.empty?}" do
       osom_tables_search(url, search) +
 
       content_tag(:table, options) {
-        content_tag(:caption, image_tag('osom-tables-spinner.gif', alt: nil), class: 'locker') +
+        caption = if items.empty?
+          content_tag(:span) { "No items to display here!" }
+        else
+          image_tag('osom-tables-spinner.gif', alt: nil)
+        end
+        content_tag(:caption, caption, class: 'locker') +
         capture(Table.new(self, items), &block)
       } +
 
