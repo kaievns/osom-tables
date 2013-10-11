@@ -80,7 +80,7 @@
     }
   }
 
-  &.loading {
+  &.loading, &.empty {
     table {
       th, td {
         -webkit-filter: blur(1.5px);

@@ -11,7 +11,7 @@ module OsomTables::Helper
     options[:data][:url]  = url
     options[:data][:push] = true if push
 
-    content_tag :div, class: "osom-table #{"loading" if items.empty?}" do
+    content_tag :div, class: "osom-table #{"empty" if items.empty?}" do
       osom_tables_search(url, search) +
 
       content_tag(:table, options) {
