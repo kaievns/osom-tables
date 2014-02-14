@@ -1,11 +1,24 @@
 module OsomTables::Helper
 
-  def osom_table_for(items, options={}, &block)
+  # @param [Object] items items to be displayed, not needed if the async option is set
+  # @param [Hash] options
+  # @option opts [Boolean] :async Load the table content asynchronously on dom ready
+  #
+  # TODO: Fill all these in
+  def osom_table_for(*args, &block)
+    options  = args.extract_options!
+    items    = args.first || []
     push     = options[:push] == true and options.delete(:push)
     url      = options[:url]   || request.fullpath and options.delete(:url)
     search   = options[:search] == true and options.delete(:search)
     paginate = options[:paginate] || {} and options.delete(:paginate)
     url      = url.gsub(/(\?|&)osom_tables_cache_killa=[^&]*?/, '')
+
+    # Allow the table to be loaded asynchronously
+    if options[:async]
+      options[:class] ||= []
+      options[:class] << 'async'
+    end
 
     options[:data] ||= {}
     options[:data][:url]  = url
@@ -33,6 +46,7 @@ module OsomTables::Helper
   end
 
   def osom_tables_pagination(items, url, options)
+    return ''.html_safe if items.empty?
     if respond_to?(:paginate) # kaminari
       options[:params] = Rails.application.routes.recognize_path(url, method: :get).merge(options[:params] || {})
       paginate(items, options)

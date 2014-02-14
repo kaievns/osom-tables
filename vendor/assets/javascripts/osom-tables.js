@@ -90,6 +90,14 @@
     ));
   });
 
+  /* Load async tables */
+  $(document).ready(function() {
+    $('.osom-table .async').each(function(index, element) {
+      var table = $(element);
+      return $.osom_table(table.closest('.osom-table'), table.data('url'));
+    });
+  });
+
   $(window).on('popstate', function(e) {
     var state = e.originalEvent.state;
     if (state && state.url) {
