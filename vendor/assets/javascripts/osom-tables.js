@@ -7,55 +7,7 @@
 
   if (!$) { return console.log("No jQuery? Osom!"); }
 
-  $(document).on('click', '.osom-table .pagination a', function(e) {
-    e.preventDefault();
-    load_table($(this).closest('.osom-table'), this.getAttribute('href'));
-  });
-
-  $(document).on('click', '.osom-table th[data-order]', function(e) {
-    var order = $(this).data('order'), asc = $(this).hasClass('asc');
-
-    load_table($(this).closest('.osom-table'), build_url(
-      $(this).closest('table').data('url'), {
-        order: order + (asc ? '_desc' : ''), page: 1
-      }
-    ));
-  });
-
-  $(window).on('popstate', function(e) {
-    var state = e.originalEvent.state;
-    if (state && state.url) {
-      if (current_table && current_table.find('table').data('push')) {
-        load_table(current_table, state.url, true);
-      } else {
-        document.location.href = state.url;
-      }
-    }
-  });
-
   var current_table = null;
-
-  function load_table(container, url, no_push) {
-    current_table = container.addClass('loading');
-    actual_table  = container.find('table');
-
-    actual_table.trigger('osom-table:request');
-
-    if (history.pushState && !no_push && actual_table.data('push')) {
-      history.pushState({url: url}, 'osom-table', url);
-      url = build_url(url, {osom_tables_cache_killa: true});
-    }
-
-    $.ajax(url, {
-      success: function(new_content) {
-        container.replaceWith(new_content);
-      },
-      complete: function() {
-        container.removeClass('loading');
-        actual_table.trigger('osom-table:loaded');
-      }
-    });
-  };
 
   /**
    * Rebuilds the url with the extra prams
@@ -100,5 +52,61 @@
 
     return [path, args];
   }
+
+  var osom_table = $.fn.osom_table = $.osom_table = function(container, url, no_push) {
+    current_table = container.addClass('loading');
+    actual_table  = container.find('table');
+
+    actual_table.trigger('osom-table:request');
+
+    if (history.pushState && !no_push && actual_table.data('push')) {
+      history.pushState({url: url}, 'osom-table', url);
+      url = build_url(url, {osom_tables_cache_killa: true});
+    }
+
+    $.ajax(url, {
+      success: function(new_content) {
+        container.replaceWith(new_content);
+      },
+      complete: function() {
+        container.removeClass('loading');
+        actual_table.trigger('osom-table:loaded');
+      }
+    });
+  };
+
+  $(document).on('click', '.osom-table .pagination a', function(e) {
+    e.preventDefault();
+    $.osom_table($(this).closest('.osom-table'), this.getAttribute('href'));
+  });
+
+  $(document).on('click', '.osom-table th[data-order]', function(e) {
+    var order = $(this).data('order'), asc = $(this).hasClass('asc');
+
+    $.osom_table($(this).closest('.osom-table'), build_url(
+      $(this).closest('table').data('url'), {
+        order: order + (asc ? '_desc' : ''), page: 1
+      }
+    ));
+  });
+
+  /* Load async tables */
+  $(document).ready(function() {
+    $('.osom-table .async').each(function(index, element) {
+      var table = $(element);
+      return $.osom_table(table.closest('.osom-table'), table.data('url'));
+    });
+  });
+
+  $(window).on('popstate', function(e) {
+    var state = e.originalEvent.state;
+    if (state && state.url) {
+      if (current_table && current_table.find('table').data('push')) {
+        $.osom_table(current_table, state.url, true);
+      } else {
+        document.location.href = state.url;
+      }
+    }
+  });
 
 })(jQuery);
