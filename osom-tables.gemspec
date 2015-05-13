@@ -1,6 +1,8 @@
+require File.expand_path('../lib/osom_tables', __FILE__)
+
 Gem::Specification.new do |s|
   s.name    = 'osom-tables'
-  s.version = '1.0.0'
+  s.version = OsomTables::VERSION
   s.date    = '2013-06-09'
 
   s.summary = "Fancy ajax tables in true rails style"
@@ -11,8 +13,7 @@ Gem::Specification.new do |s|
   s.homepage = 'http://github.com/MadRabbit/osom-tables'
   s.licenses = ['MIT']
 
-  s.files = Dir['lib/**/*'] + Dir['vendor/**/*']
-  s.files+= %w(
-    README.md
-  )
+  s.files        = `git ls-files`.split("\n")
+  s.executables  = `git ls-files`.split("\n").map{|f| f =~ /^bin\/(.*)/ ? $1 : nil}.compact
+  s.require_path = 'lib'
 end
