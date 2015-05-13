@@ -66,7 +66,11 @@
 
     $.ajax(url, {
       success: function(new_content) {
-        container.replaceWith(new_content);
+        var new_container = $(new_content);
+        container.replaceWith(new_container);
+
+        var actual_table = new_container.find('table');
+        actual_table.data('url', url);
       },
       complete: function() {
         container.removeClass('loading');
