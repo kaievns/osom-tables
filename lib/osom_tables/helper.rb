@@ -9,7 +9,7 @@ module OsomTables::Helper
     options  = args.extract_options!
     items    = args.first || []
     push     = options[:push] == true and options.delete(:push)
-    url      = options[:url]   || request.fullpath and options.delete(:url)
+    url      = options[:url]   || request.path and options.delete(:url)
     search   = options[:search] == true and options.delete(:search)
     paginate = options[:paginate] || {} and options.delete(:paginate)
     url      = url.gsub(/(\?|&)osom_tables_cache_killa=[^&]*?/, '')
@@ -17,6 +17,7 @@ module OsomTables::Helper
     # Allow the table to be loaded asynchronously
     if options[:async]
       options[:class] ||= []
+      options[:class] = options[:class].split(' ') if options[:class].is_a?(String)
       options[:class] << 'async'
     end
 
@@ -68,7 +69,7 @@ module OsomTables::Helper
 
     def head(&block)
       inner, has_tr = capture_tr { yield }
-      
+
       head_row = if has_tr
         inner
       else

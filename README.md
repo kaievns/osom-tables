@@ -14,7 +14,6 @@ Ajax tables engine that respects MVC and goes well with the rails way.
 
 You can find a simple demo-app [over here](https://github.com/MadRabbit/osom-tables-app)
 
-
 ## Simple Setup
 
 Add this gem to your `Gemfile`
@@ -65,7 +64,6 @@ And finally, add the assets to your `application.js` and `application.css` files
 
 And you're good to go!
 
-
 ## Adding Sorting
 
 OsomTables don't enforce any sort of dealing with the sorting, just use your standard scopes.
@@ -115,6 +113,14 @@ end
 
 And don't forget to enjoy the awesomeness of easily unit-testable code!
 
+## Table Reuse
+
+By default `osom-tables` will use your current url as the url to fetch the table data. If you wish to reuse the `_table` partial from another view/controller, you must specify the `url: resource_path` option to ensure the table data is sourced correctly.
+
+```haml
+= osom_tables_for @things, url: things_path do |t|
+  ...
+```
 
 ## HTML5 Push State
 
@@ -122,24 +128,16 @@ OsomTables can easily hook you up with the html5 push-state goodness.
 Yes, it's just like `pjax` (whoever come up with this name) only better
 coz it renders only what needs to be rendered.
 
-To switch push state on, just pass the `push: true` option with your table
+To switch push state on, just pass the `push: true` option with your table. You must also use `async: true`.
 
 ```haml
-= osom_tables_for @things, push: true do |t|
+= osom_tables_for @things, async: true, push: true do |t|
   ...
 ```
 
+## HTML5 Push State and Filters
 
-## Custom Urls
-
-By default `osom-tables` will use your current url as the base one. But,
-in case you would like to reuse the `_table` partial, in different locations,
-you do so, but specifying the `url: smth_path` option with your tables
-
-```haml
-= osom_tables_for @things, url: other_things_path do |t|
-  ...
-```
+When using html5 push-state with a filterbar like the one used in AVETARS, do not use `async: true` as the filterbar will handle the loading of the table data after adding filter parameters to the query string.
 
 ## License & Copyright
 
