@@ -113,6 +113,23 @@ end
 
 And don't forget to enjoy the awesomeness of easily unit-testable code!
 
+## Sorting + Filters (JobReady implementation)
+
+In case you want to use filtering and sorting combined, follow the example below taken from AVETARS:
+
+```
+var apply_filters = function(wrapper) {
+  var form, params, table;
+  form = wrapper.find("form.osom-tables-filters");
+  params = extract_params(form);
+  table = wrapper.find(".osom-table");
+  $.store_osom_filters(table, params); // stores current filters
+  $.append_osom_order(table, params); // append selected order to filters params
+  return $.osom_table(table, $.param.querystring(wrapper.find(".osom-table > table").data("url"), params, 2));
+};
+
+```
+
 ## Table Reuse
 
 By default `osom-tables` will use your current url as the url to fetch the table data. If you wish to reuse the `_table` partial from another view/controller, you must specify the `url: resource_path` option to ensure the table data is sourced correctly.

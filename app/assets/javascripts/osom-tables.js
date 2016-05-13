@@ -36,12 +36,17 @@
 
   // Fetches data and populates table based on order link clicked
   function order_table(order_link) {
-    var order = $(order_link).data('order'), asc = $(order_link).hasClass('asc');
+    var asc = $(order_link).hasClass('asc');
+    var order = $(order_link).data('order') + (asc ? '_desc' : '');
+    var table = $(order_link).closest('.osom-table');
+    var params = {};
 
-    $.osom_table($(order_link).closest('.osom-table'), build_url(
-      $(order_link).closest('table').data('url'), {
-        order: order + (asc ? '_desc' : ''), page: 1
-      }
+    $.store_osom_order(table, order);
+    $.append_osom_filters(table, params);
+    params.order = order;
+    params.page = 1;
+    $.osom_table(table, build_url(
+      $(order_link).closest('table').data('url'), params
     ));
   }
 
@@ -89,6 +94,27 @@
       }
     });
   };
+
+  var store_osom_filters = $.fn.store_osom_filters = $.store_osom_filters = function(table, filters) {
+    table.data("osomFilters", filters);
+  };
+
+  var store_osom_order = $.fn.store_osom_order = $.store_osom_order = function(table, order) {
+    table.data("osomOrder", order);
+  };
+
+  var append_osom_order = $.fn.append_osom_order = $.append_osom_order = function(table, params) {
+    if(table.data('osomOrder')) {
+      params.order = table.data('osomOrder')
+    }
+  }
+
+  var append_osom_filters = $.fn.append_osom_filters = $.append_osom_filters = function(table, params) {
+    var filters = table.data('osomFilters');
+    if(filters) {
+      for (var attrname in filters) { params[attrname] = filters[attrname]; }
+    }
+  }
 
   // Helper Functions
   // ==========================================================================
