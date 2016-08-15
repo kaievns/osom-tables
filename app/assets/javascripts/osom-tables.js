@@ -20,6 +20,12 @@
     order_table(this);
   });
 
+  $(document).on('click', '.osom-table table th.mark > input[type="checkbox"]', mark_an_item_as_checked);
+
+  $(document).on('click', '.osom-table table td.mark > input[type="checkbox"]', function() {
+    return save_checkboxes($(this).closest('.osom-table'));
+  });
+
   /* Load async tables */
   $(document).ready(function() {
     update_table_urls_from_query_string();
@@ -69,6 +75,16 @@
     });
   }
 
+  function mark_an_item_as_checked(){
+    $(this).closest('table').find('td.mark > input[type="checkbox"]').each((function(_this) {
+      return function(i, box) {
+        box.checked = _this.checked;
+        return true;
+      };
+    })(this));
+    return store_checked_ids_in_data_attribute($(this).closest('.osom-table'));
+  }
+
   // Public Functions
   // ==========================================================================
 
@@ -87,6 +103,7 @@
       cache: false,
       success: function(new_content) {
         table_load_success(container, new_content, url)
+        load_checkbox_state_for_page(container);
       },
       complete: function() {
         container.removeClass('loading');
@@ -142,6 +159,32 @@
       container.removeClass('empty');
     }
   }
+
+  function store_checked_ids_in_data_attribute(container) {
+    var checked_ids;
+    checked_ids = (container.data('checked') || '').split(',');
+    container.find('td.mark input[type="checkbox"]').each(function() {
+      var item_id;
+      item_id = $(this).data('item-id').toString();
+      if ($.inArray(item_id, checked_ids) === -1) {
+        if (this.checked) {
+          return checked_ids.push(item_id);
+        }
+      } else if (!this.checked) {
+        return checked_ids.splice($.inArray(item_id, checked_ids), 1);
+      }
+    });
+    return container.data('checked', checked_ids.join(',').replace(/^,/, ''));
+  };
+
+  function load_checkbox_state_for_page(container) {
+    var checked_ids;
+    checked_ids = (container.data('checked') || '').split(',');
+    return container.find('td.mark input[type="checkbox"]').each(function() {
+      this.checked = $.inArray($(this).data('item-id').toString(), checked_ids) !== -1;
+      return true;
+    });
+  };
 
   // URL Functions
   // ==========================================================================
