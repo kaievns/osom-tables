@@ -82,7 +82,7 @@
 
   &.loading, &.empty {
     table {
-      th, td {
+      thead, tbody {
         -webkit-filter: blur(1.5px);
         -moz-filter:    blur(1.5px);
         -ms-filter:     blur(1.5px);
