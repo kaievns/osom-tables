@@ -12,6 +12,9 @@ module OsomTables::Helper
     url      = options[:url]   || request.path and options.delete(:url)
     search   = options[:search] == true and options.delete(:search)
     paginate = options[:paginate] || {} and options.delete(:paginate)
+    show_checkbox   = options[:show_checkbox] || false
+    options.delete(:show_checkbox) if options[:show_checkbox]
+
     url      = url.gsub(/(\?|&)osom_tables_cache_killa=[^&]*?/, '')
 
     # Allow the table to be loaded asynchronously
@@ -35,7 +38,7 @@ module OsomTables::Helper
           image_tag('osom-tables-spinner.gif', alt: nil)
         end
         content_tag(:caption, caption, class: 'locker') +
-        capture(Table.new(self, items), &block)
+        capture(Table.new(self, items, show_checkbox), &block)
       } +
 
       osom_tables_pagination(items, url, paginate)
@@ -62,9 +65,10 @@ module OsomTables::Helper
   # The thing that we yield into the block
   #
   class Table
-    def initialize(context, items)
+    def initialize(context, items, show_checkbox=false)
       @context = context
       @items   = items
+      @show_checkbox= show_checkbox
     end
 
     def head(&block)
@@ -129,6 +133,8 @@ module OsomTables::Helper
       inner = @context.capture do
         yield
       end
+
+      inner.unshift "<td class='mark'><input type='checkbox' data-item-id='#{item.id}'/></td>\n" if @show_checkbox
       [inner, inner =~ /\A\s*<tr(\s|>)/i]
     end
   end
