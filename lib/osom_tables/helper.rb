@@ -12,7 +12,9 @@ module OsomTables::Helper
     url      = options[:url]   || request.path and options.delete(:url)
     search   = options[:search] == true and options.delete(:search)
     paginate = options[:paginate] || {} and options.delete(:paginate)
-    url      = url.gsub(/(\?|&)osom_tables_cache_killa=[^&]*?/, '')
+    show_checkbox = options[:show_checkbox] || false
+    options.delete(:show_checkbox) if options[:show_checkbox]
+    url = url.gsub(/(\?|&)osom_tables_cache_killa=[^&]*?/, '')
 
     # Allow the table to be loaded asynchronously
     if options[:async]
@@ -35,7 +37,7 @@ module OsomTables::Helper
           image_tag('osom-tables-spinner.gif', alt: nil)
         end
         content_tag(:caption, caption, class: 'locker') +
-        capture(Table.new(self, items), &block)
+        capture(Table.new(self, items, show_checkbox), &block)
       } +
 
       osom_tables_pagination(items, url, paginate)
@@ -62,9 +64,10 @@ module OsomTables::Helper
   # The thing that we yield into the block
   #
   class Table
-    def initialize(context, items)
+    def initialize(context, items, show_checkbox=false)
       @context = context
       @items   = items
+      @show_checkbox = show_checkbox
     end
 
     def head(&block)
@@ -93,7 +96,7 @@ module OsomTables::Helper
         head_row.gsub! m[0], "<th#{m[1]} class='#{css}' data-#{m[2]}#{m[5]}>"
       end
 
-      @context.content_tag :thead, head_row.html_safe
+      @context.content_tag :thead, insert_checkbox(head_row).html_safe
     end
 
     def body(&block)
@@ -101,13 +104,15 @@ module OsomTables::Helper
         @items.map do |item|
           inner, has_tr = capture_tr { yield item }
 
-          if has_tr
+          row = if has_tr
             inner
           elsif defined?(ActiveRecord) && item.is_a?(ActiveRecord::Base)
             @context.content_tag_for(:tr, item){ inner }
           else
             @context.content_tag(:tr){ inner }
           end
+
+          insert_checkbox(row, item)
         end.join("\n").html_safe
       end
     end
@@ -125,11 +130,28 @@ module OsomTables::Helper
     end
 
     private
+
     def capture_tr(&block)
       inner = @context.capture do
         yield
       end
+
       [inner, inner =~ /\A\s*<tr(\s|>)/i]
+    end
+
+    def insert_checkbox(html_string, row_item=nil)
+      return html_string unless @show_checkbox
+
+      temp = html_string.partition(/<tr.*?>/)
+
+      checkbox_tag = if row_item
+        "<td class='mark'><input type='checkbox' data-item-id='#{row_item.id}'/></td>\n"
+      else
+        "<th class='mark'><input type='checkbox'/></th>\n"
+      end
+
+      temp.insert(2, checkbox_tag)
+      temp.join
     end
   end
 end

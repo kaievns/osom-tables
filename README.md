@@ -64,6 +64,24 @@ And finally, add the assets to your `application.js` and `application.css` files
 
 And you're good to go!
 
+## Adding Checkbox
+
+OsomTables offer show_checkbox setting to enable checkboxes on datatable
+
+```haml
+= osom_table_for @things, show_checkbox: true do |t|
+
+  = t.head do
+    %th Name
+    %th Size
+
+  = t.body do |thing|
+    %td= thing.name
+    %td= thing.size
+```
+
+The checked checkbox stage is able to be saved when you navigate through pages.
+
 ## Adding Sorting
 
 OsomTables don't enforce any sort of dealing with the sorting, just use your standard scopes.
