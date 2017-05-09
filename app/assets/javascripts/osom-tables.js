@@ -107,6 +107,7 @@
       },
       complete: function() {
         container.removeClass('loading');
+        actual_table  = container.find('table');
         actual_table.trigger('osom-table:loaded');
       }
     });
