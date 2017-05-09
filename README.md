@@ -162,7 +162,7 @@ By default `osom-tables` will use your current url as the url to fetch the table
 ```
 $(document).ready(function(){
   $('body').on('osom-table:loaded', '#scanned_document_table', function() {
-    //initialize your javascritp component in osom-table here
+    //initialize your javascript component in osom-table here
 
   });
 });
