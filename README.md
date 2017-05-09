@@ -157,6 +157,18 @@ By default `osom-tables` will use your current url as the url to fetch the table
   ...
 ```
 
+## Trigger event
+
+```
+$(document).ready(function(){
+  $('body').on('osom-table:loaded', '#scanned_document_table', function() {
+    //initialize your javascritp component in osom-table here
+
+  });
+});
+
+```
+
 ## HTML5 Push State
 
 OsomTables can easily hook you up with the html5 push-state goodness.
