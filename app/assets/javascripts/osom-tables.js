@@ -150,8 +150,8 @@
 
   // Callback for successful ajax load of table data
   function table_load_success(container, new_content, url) {
-    var new_container = $('<div class="osom-table ">').append($(new_content).filter('div.osom-table'));
-    container.html(new_container);
+    var new_container = $(new_content);
+    container.html($(new_content).children());
 
     var actual_table = new_container.find('table');
     actual_table.data('url', url);
