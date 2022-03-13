@@ -54,7 +54,7 @@ module OsomTables::Helper
     return ''.html_safe if items.empty?
     if respond_to?(:paginate) # kaminari
       options[:params] = Rails.application.routes.recognize_path(url, method: :get).merge(options[:params] || {})
-      paginate(items, options)
+      paginate(items, **options)
     elsif respond_to?(:will_paginate)
       will_paginate items, options
     else
